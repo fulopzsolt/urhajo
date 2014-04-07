@@ -221,6 +221,8 @@ function endgame()
 	
 end
 
+
+
 function ujra(event)
 
 	if egyszer==1 then
