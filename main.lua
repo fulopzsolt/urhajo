@@ -7,7 +7,7 @@ display.setStatusBar(display.HiddenStatusBar)
 local physics = require "physics"
 physics.start()
 physics.setGravity(0, 1)
-physics.setDrawMode("hybrid")
+--physics.setDrawMode("hybrid")
 
 local SZ = display.contentWidth / 2    
 local H = display.contentHeight / 2
@@ -32,19 +32,46 @@ function main()
 	start()
 end
 
+local function  csillagkirajz()
+
+local csillagok = {"csillag1.png", "csillag2.png", "csillag3.png"}
+local allStars = {}
+
+hatter = display.newImage("hatt.png", SZ, H)
+
+
+	local Nr, meret, i, j, el, csillag
+	
+	for i = 1, 15 do
+		for j = 1, 9 do
+		Nr = math.random(1, 3)
+		meret = math.random(10, 20) / 100
+		el = math.random(3,16)*5 
+		csillag = display.newImage(csillagok[Nr])
+		csillag.alpha=1
+		csillag.x = 60*(j-1)+1+el
+		csillag.y = 60*(i-1)+el
+		csillag:scale(meret, meret)
+		end
+	end
+end
+
 function start()
 	
 	-- hatter megjelenites
 
-	hatter = display.newImage("Hatter.png") 
-	hatter.x = SZ
-	hatter.y = H
+	--hatter = display.newImage("Hatter.png") 
+	--hatter.x = SZ
+	--hatter.y = H
+	
+	csillagkirajz()
 	
 	-- hajo megjelenites, atalakitas
 
 	hajo = display.newImage("Hajo.png")
 	hajo.anchorX = 0.50
 	hajo.anchorY = 1
+	hajo:scale(0.8, 0.8)
 	hajo.x=SZ
 	hajo.y=hajo.contentHeight
 
