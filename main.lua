@@ -7,7 +7,7 @@ display.setStatusBar(display.HiddenStatusBar)
 local physics = require "physics"
 physics.start()
 physics.setGravity(0, 1)
-physics.setDrawMode("hybrid")
+-- physics.setDrawMode("hybrid")
 
 local SZ = display.contentWidth / 2    
 local H = display.contentHeight / 2
