@@ -7,7 +7,9 @@ display.setStatusBar(display.HiddenStatusBar)
 local physics = require "physics"
 physics.start()
 physics.setGravity(0, 1)
---physics.setDrawMode("hybrid")
+
+-- physics.setDrawMode("hybrid")
+
 
 local SZ = display.contentWidth / 2    
 local H = display.contentHeight / 2
@@ -85,6 +87,8 @@ function start()
 	foldf = H*2-fold.contentHeight			
 	physics.addBody(fold, "static", {density = 1, friction = 0, bounce = 0})
 	
+	-- asteroidok
+	asteroids()
 	-- sebesseg, magassag kiirasa
 	
 	yVtext=display.newText ("Vy=" , SZ-180, 40, "Arial", 40)
@@ -237,6 +241,43 @@ function ujra(event)
 		print("ujra")	
 	end	
 
+end
+
+--display asteroid objects
+function asteroids()
+	local rocks = 
+				{ 
+					{150,600 },
+					{300, 450},
+					{450, 250}
+				}
+	print(rocks[1][1])
+	group = display.newGroup()
+	for i=1,#rocks do
+	    createAsteroids(rocks[i][1], rocks[i][2])
+	end
+	transition.to( group, { tag = "moveRock", time=2000, x=group.x, y=group.y + 5, delay=10, transition=ease, onComplete = asteroidsFloatDown() } )	
+end
+
+--create asteroid objects
+function createAsteroids(xPos, yPos)
+	local scaleFactor = 0.25
+	local physicsData = (require "rock-shape").physicsData(scaleFactor)
+	obj = display.newImage("rock.png")
+	obj.width = obj.width/4
+	obj.height = obj.height/4
+	obj.x = xPos
+	obj.y = yPos
+	physics.addBody( obj, "kinematic", physicsData:get("rock") )
+	group:insert( obj )
+end
+
+--move obj
+function asteroidsFloatUp()
+	transition.to( group, { tag = "moveRock", time=2000, x=group.x, y=group.y + 5, delay=10, transition=ease, onComplete = asteroidsFloatDown } )
+end
+function asteroidsFloatDown()
+	transition.to( group, { tag = "moveRock", time=2000, x=group.x, y=group.y - 5, delay=10, transition=ease, onComplete = asteroidsFloatUp } )
 end
 
 main()
