@@ -172,6 +172,7 @@ function start()
 		menuhatter:removeEventListener("tap", start)	
 		
 		csillagkirajz()
+
 		
 		faktor=0.05
 		-- hajo megjelenites, atalakitas
@@ -189,10 +190,10 @@ function start()
 		anchorX = 0.50
 		fold.anchorY = 1
 		fold.x = SZ
-		fold.y = display.contentHeight
+		fold.y = display.contentHeight - 80
 		foldf = H*2-fold.contentHeight			
 		physics.addBody(fold, "static", {density = 1, friction = 0, bounce = 0})
-	
+		
 		-- tuuuuuz
 	
 		for i = 1, 2 do	
@@ -259,7 +260,7 @@ function start()
 		kiirH=display.newText(foldf-math.round(hajo.y)+1, SZ+160, 40, "Arial", 60)
 		azelotti=0
 		indit()
-	
+		fuelBar()
 	end	
 
 function indit()
@@ -481,9 +482,10 @@ function swipeirany()
  
         xDistance =  math.abs(endX - beginX)
         yDistance =  math.abs(endY - beginY)
-        
+       
         if xDistance > yDistance then
-		
+			
+			fuelDown()
 			if beginX > endX then
 				
                 --  print("swipe left")
@@ -511,7 +513,7 @@ function swipeirany()
         else 
 		
             if beginY > endY then
-				
+				fuelDown()
                 -- print("swipe up")
 				hajo:applyLinearImpulse(0, -10.5, hajo.x, hajo.y)
 						
@@ -598,34 +600,15 @@ print("robban")
 		transition.to(robbanas, {time = 1000, alpha=0,
 			transition = easing.outExpo})
 			
+
 end	
 
-local function AddCommas( number, maxPos )
-        
-        local s = tostring( number )
-        local len = string.len( s )
-        
-        if len > maxPos then
-                -- Add comma to the string
-                local s2 = string.sub( s, -maxPos )             
-                local s1 = string.sub( s, 1, len - maxPos )             
-                s = (s1 .. "," .. s2)
-        end
-        
-        maxPos = maxPos - 3             -- next comma position
-        
-        if maxPos > 0 then
-                return AddCommas( s, maxPos )
-        else
-                return s
-        end
- 
-end
+
 
 	
 function endgame()
 
-	if hajo.y>=(H*2-fold.contentHeight-1) then
+	if hajo.y>=(H*2-fold.contentHeight-1 - 80) then
 	
 		kiirVy.text=0
 		kiirVx.text=0
@@ -648,7 +631,6 @@ function endgame()
 		
 		end	
 	end
-	print( "TextureMemory: " .. AddCommas( system.getInfo("textureMemoryUsed"), 9 ) .. " bytes" )
 	print( system.getInfo("textureMemoryUsed"))
 end
 
@@ -695,6 +677,40 @@ function asteroids()
 	transition.to( group, { tag = "moveRock", time=2000, x=group.x, y=group.y + 5, delay=10, transition=ease, onComplete = asteroidsFloatDown() } )	
 	
 	end
+function fuelBar()
+	
+	fuelBar = display.newImage("fuel.png")
+	fuelBar.height = fuelBar.height +100
+	fuelBar:rotate( 270 )
+	fuelBar.x = display.contentWidth/2
+	fuelBar.y = display.contentHeight- 110
+
+	fuelBarMask = display.newImage("fuelMask.png")
+
+	fuelBarMask.height = fuelBarMask.height + 100
+	fuelBarMask:rotate( 90 )
+	fuelBarMask.anchorY = 1
+	fuelBarMask.x = display.contentWidth - (display.contentWidth - fuelBar.contentWidth)/2
+	fuelBarMask.y = display.contentHeight -110
+	local fold = display.newImage("Fold.png")
+	
+	fold.anchorX = 0
+	fold.anchorY = 1
+	fold.x = display.contentWidth - (display.contentWidth - fuelBar.contentWidth)/2
+	fold.y = display.contentHeight - 80
+
+end
+
+function fuelDown()
+	local zeroPoint = (display.contentWidth - fuelBar.contentWidth)/2
+	if (fuelBarMask.x - 10 > zeroPoint) then
+		transition.to( fuelBarMask, { tag = "moveFul", time=1000, x=fuelBarMask.x-10, y=fuelBarMask.y, delay=0, transition=ease} )	
+	else 
+		transition.to( fuelBarMask, { tag = "moveFul", time=1000, x=zeroPoint, y=fuelBarMask.y, delay=0, transition=ease} )
+		hatter:removeEventListener("touch", swipe)
+	end
+end
+local 
 
 --create asteroid objects
 
