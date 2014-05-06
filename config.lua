@@ -4,9 +4,9 @@ application =
 		{
 		width = 480,
 		height = 800,
-		scale = "zoomEven",
-		xAlign = "Left",
-		yAlign = "Top",
+		scale = "letterbox",
+		xAlign = "middle",
+		yAlign = "middle",
 		fps = 60,
 		},
 }

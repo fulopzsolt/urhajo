@@ -8,6 +8,8 @@ local physics = require "physics"
 physics.start()
 physics.setGravity(0, 0.4)
 
+local widget = require "widget"
+
 -- physics.setDrawMode("hybrid")
 
 local SZ = display.contentWidth / 2    	-- kepernyo szelesseg kozepe
@@ -19,7 +21,7 @@ local vege
 local kiirVy, kiirH
 local foldf								-- foldfelszin
 local teglalap
-local hatter, fold, hajo				
+local hatter, fold, hajo, menuhatter				
 local egyszer
 local faktor
 local egesszam, osszeges, megeg
@@ -31,6 +33,8 @@ tuzek[2]={}
 local baltuz = {}
 local jobbtuz = {}
 local robbante, robbanas
+local gombok
+local jo
 
 local beginX 
 local beginY  
@@ -41,11 +45,11 @@ local yTavolsag
 
 function main()
 
-		start()
+		menu()
 		
 	end
 
-local function  csillagkirajz()
+function  csillagkirajz()
 
 		local csillagok = {"csillag1.png", "csillag2.png", "csillag3.png"}
 		local allStars = {}
@@ -72,11 +76,104 @@ local function  csillagkirajz()
 		
 	end
 
+local function closeapp()
+		if  system.getInfo("platformName")=="Android" then
+		
+           native.requestExit()
+		   
+		else
+		
+           os.exit() 
+		   
+		end
+
+end
+
+local function megnyom1()
+
+		--gombok[1]:removeEventListener("touch", startgomb)
+		if gombok[1].alpha==0 then 
+		
+			gombok[2].alpha=0
+			gombok[1].alpha=1
+			timer.performWithDelay( 500, start, 1)
+		
+		end
+			
+		if gombok[3].alpha==0 then
+			
+			gombok[4].alpha=0
+			gombok[3].alpha=1
+			timer.performWithDelay( 500, closeapp, 1)
+			
+		end
+		
+end			
+
+function gombnyomas(event)
+
+		if event.phase == "began" then
+				
+			if (event.x > SZ - gombok[1].contentWidth*0.5) and (event.x < SZ + gombok[1].contentWidth*0.5) then	
+				
+				if (event.y > H - 60 - gombok[1].contentHeight*0.5) and (event.y < H - 60 + gombok[1].contentHeight*0.5) then
+				
+					jo=true
+					gombok[1].alpha=0
+					gombok[2].alpha=1	
+					
+				end	
+				
+				if (event.y > H + 60 - gombok[1].contentHeight*0.5) and (event.y < H + 60 + gombok[1].contentHeight*0.5) then
+				
+					jo=true
+					gombok[3].alpha=0
+					gombok[4].alpha=1	
+					print(gombok[3].alpha)
+				end
+				
+			end
+			
+        end
+		
+
+        if (event.phase == "ended") and (jo == true)  then  
+
+			jo=false
+			timer.performWithDelay( 100, megnyom1, 1)
+			
+        end
+		
+end
+	
+function menu ()
+
+		--print(SZ, H)
+		gombok={}
+		menuhatter = display.newImage("Menuhatt.png")
+		menuhatter:scale(0.27,0.27)
+		menuhatter.anchorX = 0.50
+		menuhatter.anchorY = 0.50
+		menuhatter.x=SZ
+		menuhatter.y=H
+		gombok[1] = display.newImage("Button1.png", SZ, H-60)
+		gombok[2] = display.newImage("PressedButton1.png", SZ, H-60)
+		gombok[3] = display.newImage("Button2.png", SZ, H+60)
+		gombok[4] = display.newImage("PressedButton2.png", SZ, H+60)
+		gombok[2].alpha = 0
+		gombok[4].alpha = 0
+		
+		jo=false
+		Runtime:addEventListener("touch", gombnyomas)
+end
+	
 function start()
 		
-		csillagkirajz()
-		faktor=0.05
+		menuhatter:removeEventListener("tap", start)	
 		
+		csillagkirajz()
+		
+		faktor=0.05
 		-- hajo megjelenites, atalakitas
 
 		hajo = display.newImage("Hajo.png")
@@ -167,6 +264,7 @@ function start()
 
 function indit()
 
+	--print( "collectgarbage is " .. collectgarbage("count")  )
 	robbante=false
 	teglalap=display.newRect(SZ, H, 300, 50)
 	teglalap.anchorX=0.50
@@ -207,7 +305,7 @@ function startgame()
 
 function eges()
 
-		print(egesszam)
+		--print(egesszam)
 		for i=1, 3 do
 		
 			if (egesszam<osszeges) then
@@ -254,7 +352,7 @@ function eges()
 
 function baleges()
 
-		print(balegesszam)
+		--print(balegesszam)
 		
 		if (balegesszam<balosszeges) then
 		
@@ -295,7 +393,7 @@ function baleges()
 	
 	function jobbeges()
 
-		print(jobbegesszam)
+		--print(jobbegesszam)
 		
 		if (jobbegesszam<jobbosszeges) then
 		
@@ -455,7 +553,6 @@ function swipe(event)
 	end
 
 function oldalhatar()
-print (hajo.x, hajo.width)
 		Vx, Vy = hajo:getLinearVelocity()
 		if ((hajo.x - hajo.width * 0.25) < 0) then
 	
@@ -496,10 +593,35 @@ print("robban")
 		robbanas:scale(0.05,0.05)
 		robbanas.x=hajo.x
 		robbanas.y=hajo.y-hajo.contentHeight*0.5+5
-		transition.to(robbanas, {time = 100, xScale = 0.4, yScale =
+		transition.to(robbanas, {time = 1000, xScale = 0.4, yScale =
 			0.4, transition = easing.outExpo})
+		transition.to(robbanas, {time = 1000, alpha=0,
+			transition = easing.outExpo})
 			
 end	
+
+local function AddCommas( number, maxPos )
+        
+        local s = tostring( number )
+        local len = string.len( s )
+        
+        if len > maxPos then
+                -- Add comma to the string
+                local s2 = string.sub( s, -maxPos )             
+                local s1 = string.sub( s, 1, len - maxPos )             
+                s = (s1 .. "," .. s2)
+        end
+        
+        maxPos = maxPos - 3             -- next comma position
+        
+        if maxPos > 0 then
+                return AddCommas( s, maxPos )
+        else
+                return s
+        end
+ 
+end
+
 	
 function endgame()
 
@@ -526,7 +648,8 @@ function endgame()
 		
 		end	
 	end
-	
+	print( "TextureMemory: " .. AddCommas( system.getInfo("textureMemoryUsed"), 9 ) .. " bytes" )
+	print( system.getInfo("textureMemoryUsed"))
 end
 
 
@@ -561,7 +684,7 @@ function asteroids()
 					{300, 450},
 					{450, 250}
 				}
-	print(rocks[1][1])
+	--print(rocks[1][1])
 	group = display.newGroup()
 	for i=1,#rocks do
 	
