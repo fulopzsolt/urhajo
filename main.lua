@@ -10,7 +10,7 @@ physics.setGravity(0, 0.4)
 
 local widget = require "widget"
 
--- physics.setDrawMode("hybrid")
+physics.setDrawMode("hybrid")
 
 local SZ = display.contentWidth / 2    	-- kepernyo szelesseg kozepe
 local H = display.contentHeight / 2			-- kepernyo magassag kozepe
@@ -169,21 +169,24 @@ end
 	
 function start()
 		
-		menuhatter:removeEventListener("tap", start)	
-		
+		-- menuhatter:removeEventListener("tap", start)	
+		Runtime:removeEventListener("touch", gombnyomas)
 		csillagkirajz()
 
 		
 		faktor=0.05
 		-- hajo megjelenites, atalakitas
 
+		
 		hajo = display.newImage("Hajo.png")
 		hajo.anchorX = 0.50
 		hajo.anchorY = 1
 		hajo:scale(0.5, 0.5)
 		hajo.x=SZ
 		hajo.y=hajo.contentHeight
-
+		local scaleFactor = 0.5
+		local physicsData = (require "ship").physicsData(scaleFactor)
+		physics.addBody( hajo, "dynamic", physicsData:get("Hajo") )
 		-- fold megjelenites, atalakitas
 	 
 		fold = display.newImage("Fold.png")
